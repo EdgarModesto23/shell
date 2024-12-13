@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 
 int main() {
@@ -10,6 +11,9 @@ int main() {
 
     std::string input;
     std::getline(std::cin, input);
+    if (input == "exit 0") {
+      exit(0);
+    }
     std::cout << input << ": command not found\n";
   }
 }
