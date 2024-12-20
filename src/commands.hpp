@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-enum allowed_commands { eEcho, eExit, eUnkown };
+enum allowed_commands { eEcho, eType, eExit, eUnkown };
 
 allowed_commands get_command(const std::string cmd);
 
@@ -27,6 +27,23 @@ public:
   void exec() { std::cout << message << '\n'; };
 
   ~Echo(){};
+};
+
+class Type : public ICommand {
+private:
+  std::string cmd;
+
+public:
+  Type(std::string cmd) : cmd{cmd} {};
+
+  void exec() {
+    auto t{get_command(cmd)};
+    if (t != eUnkown) {
+      std::cout << cmd << " is a shell builtin\n";
+      return;
+    }
+    std::cout << cmd << ": not found\n";
+  };
 };
 
 class NotKnown : public ICommand {

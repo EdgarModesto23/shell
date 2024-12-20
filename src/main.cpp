@@ -8,6 +8,9 @@ allowed_commands get_command(const std::string cmd) {
   if (cmd == "echo") {
     return eEcho;
   };
+  if (cmd == "type") {
+    return eType;
+  }
   if (cmd == "exit") {
     return eExit;
   };
@@ -45,6 +48,10 @@ std::unique_ptr<ICommand> parse_input(const std::string in) {
   case eEcho: {
     std::vector<std::string> v(parsed.begin() + 1, parsed.end());
     auto e = std::make_unique<Echo>(join(v, ' '));
+    return e;
+  }
+  case eType: {
+    auto e = std::make_unique<Type>(parsed[1]);
     return e;
   }
   case eExit: {
