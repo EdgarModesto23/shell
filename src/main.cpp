@@ -1,8 +1,39 @@
 #include "commands.hpp"
 #include <cstdlib>
+#include <fstream>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
+
+struct PATH isInPath(std::string program) {
+  struct PATH res;
+  auto path = split(getenv("PATH"), ':');
+  res.dir = "";
+  res.exists = false;
+  for (auto val : path) {
+    std::ifstream file;
+    file.open(val + "/" + program);
+    if (file) {
+      res.dir = val + "/" + program;
+      res.exists = true;
+      return res;
+    }
+  }
+  return res;
+}
+
+std::unordered_set<std::string> parse_env(const std::string env) {
+  std::unordered_set<std::string> result{};
+
+  auto paths{split(env, ':')};
+
+  for (auto val : paths) {
+    result.insert(val);
+  }
+
+  return result;
+};
 
 allowed_commands get_command(const std::string cmd) {
   if (cmd == "echo") {
@@ -24,7 +55,6 @@ std::string join(const std::vector<std::string> &vect, char separator) {
     joined.append(val);
     joined.push_back(separator);
   }
-
   joined.pop_back();
 
   return joined;

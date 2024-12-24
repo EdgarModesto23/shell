@@ -3,11 +3,19 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 enum allowed_commands { eEcho, eType, eExit, eUnkown };
 
+struct PATH {
+  std::string dir;
+  bool exists;
+};
+
 allowed_commands get_command(const std::string cmd);
+
+PATH isInPath(std::string);
 
 std::vector<std::string> split(const std::string &text, const char delim);
 
@@ -42,6 +50,12 @@ public:
       std::cout << cmd << " is a shell builtin\n";
       return;
     }
+    auto pathProgram = isInPath(cmd);
+    if (pathProgram.exists) {
+      std::cout << cmd << " is " << pathProgram.dir << '\n';
+      return;
+    }
+
     std::cout << cmd << ": not found\n";
   };
 };
@@ -59,3 +73,12 @@ public:
 };
 
 std::unique_ptr<ICommand> parse_input(const std::string in);
+
+std::unordered_set<std::string> parse_env(const std::string);
+
+class Environment {
+
+public:
+  std::unordered_set<std::string> path;
+  Environment(std::string env) : path{parse_env(env)} {};
+};
