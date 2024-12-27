@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -49,15 +50,14 @@ allowed_commands get_command(const std::string cmd) {
 }
 
 std::string join(const std::vector<std::string> &vect, char separator) {
-  std::string joined{};
-
-  for (auto val : vect) {
-    joined.append(val);
-    joined.push_back(separator);
+  std::stringstream ss;
+  for (size_t i = 0; i < vect.size(); ++i) {
+    ss << vect[i];
+    if (i != vect.size() - 1) {
+      ss << separator;
+    }
   }
-  joined.pop_back();
-
-  return joined;
+  return ss.str();
 }
 
 std::vector<std::string> split(const std::string &str, const char delim) {
@@ -86,6 +86,19 @@ std::unique_ptr<ICommand> parse_input(const std::string in) {
   }
   case eExit: {
     exit(0);
+  }
+  case eUnkown: {
+    auto program = isInPath(parsed[0]);
+    if (program.exists) {
+      if (parsed.size() > 1) {
+        auto program_string{join(parsed, ' ')};
+        int call = system(program_string.c_str());
+      } else {
+        int call = system(program.dir.c_str());
+      }
+      auto e = std::make_unique<UserProgram>();
+      return e;
+    }
   }
   default: {
     auto e = std::make_unique<NotKnown>(parsed[0]);

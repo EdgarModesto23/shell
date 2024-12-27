@@ -59,6 +59,14 @@ public:
     std::cout << cmd << ": not found\n";
   };
 };
+class UserProgram : public ICommand {
+public:
+  UserProgram(){};
+
+  void exec() {};
+
+  ~UserProgram(){};
+};
 
 class NotKnown : public ICommand {
 private:
